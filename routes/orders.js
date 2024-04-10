@@ -64,10 +64,11 @@ app.put('/orders/:id', (req, res)=> {
                        order_date = $2,
                        product_id_fk = $3,
                        address_id_fk = $4,
-                       total_cost = $5,
+                       total_cost = $5
                        WHERE order_id = $6`;
 
-    const values = [order_id, customer_id_fk, order_date, product_id_fk, address_id_fk, total_cost];
+    const values = [customer_id_fk, order_date, product_id_fk, address_id_fk, total_cost, orderId];
+
 
     client.query(updateQuery, values, (err, result) => {
         if (!err) {
@@ -80,7 +81,7 @@ app.put('/orders/:id', (req, res)=> {
 });
 
 app.delete('/orders/:id', (req, res)=> {
-    let deleteQuery = `delete from orders where product_id = $1`
+    let deleteQuery = `delete from orders where order_id = $1`
     const orderId = req.params.id;
 
     client.query(deleteQuery, [orderId], (err, result) => {
