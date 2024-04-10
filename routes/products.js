@@ -1,18 +1,20 @@
+//app setup with postgre, express
 const client = require('../database/index.js')
 const express = require('express');
 
 const app = express()
-const port = 3000
 
 app.use(express.json());
 
-app.listen(3000, ()=>{
-    console.log("Sever is now listening at port 3000");
+//set PORT as either assigned port or 3000
+const port = process.env.PORT || 3000
+app.listen(port, () => {
+    console.log(`Sever is now listening at port ${port}`);
 });
 
 client.connect();
 
-
+//product routes
 app.get('/products', (req, res)=>{
     client.query(`Select * from products`, (err, result)=>{
         if(!err){
@@ -25,7 +27,7 @@ app.get('/products', (req, res)=>{
 });
 
 app.get('/products/:id', (req, res) => {
-    const productId = req.params.id; // Obtain productId from request parameters
+    const productId = req.params.id; 
     client.query('SELECT * FROM products WHERE product_id = $1', [productId], (err, result) => {
         if (!err) {
             res.send(result.rows);
@@ -46,7 +48,8 @@ app.post('/products', (req, res) => {
         if (!err) {
             res.send('Insertion added to batabase successfully.');
         } else {
-            console.log(err.message)
+            console.error('Error executing query:', err);
+            res.status(500).send('Internal Server Error');
         }
     })
 });
@@ -68,7 +71,8 @@ app.put('/products/:id', (req, res)=> {
         if (!err) {
             res.send('Update to database was successful.');
         } else {
-            console.log(err.message)
+            console.error('Error executing query:', err);
+            res.status(500).send('Internal Server Error');
         }
     })
 });
@@ -82,7 +86,8 @@ app.delete('/products/:id', (req, res)=> {
             res.send('Deletion was successful');
         }
         else { 
-            console.log(err.message) 
+            console.error('Error executing query:', err);
+            res.status(500).send('Internal Server Error');
         }
     })
 });
@@ -92,7 +97,7 @@ process.on('exit', () => {
     client.end();
 });
 
-// Handle Ctrl+C signal
+//Ctrl+C kills server
 process.on('SIGINT', () => {
     client.end();
     process.exit();
