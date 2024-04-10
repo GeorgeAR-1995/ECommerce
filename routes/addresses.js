@@ -65,10 +65,11 @@ app.put('/addresses/:id', (req, res)=> {
                        line2 = $3,
                        city = $4,
                        postcode = $5,
-                       country = $6,
+                       country = $6
                        WHERE address_id = $7`;
 
-    const values = [address_id, customer_id_fk, line1, line2, city, postcode, country];
+    const values = [customer_id_fk, line1, line2, city, postcode, country, addressId];
+
 
     client.query(updateQuery, values, (err, result) => {
         if (!err) {
